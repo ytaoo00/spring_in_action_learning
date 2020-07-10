@@ -1,1 +1,30 @@
-This is a git repo used to document the learning process for Spring in action
+This is a git repo used to document the learning process for Spring in action.
+
+Chapter 1:
+	Spring project structure is similiar to a typical Maven or Gradle project structure, where application source code is placed under src/main/java, test code is placed under src/test/java, and non-Java resources are placed under src/main/resources.
+	mvnw and mvnw.cmd: maven wrapper scripts
+	pom.xml: maven build specification.
+	####Application.java: Spring boot main class that bootstraps the project
+	application.properties: specify configuration properties.
+	static: where all static contents that serve to the browser go to. Ex. Image, CSS, JavaScript, etc.
+	templates: template files that used to render content to the browser.
+	######ApplicationTests.java: orginally just to ensure that Spring application content loads successfuly.
+	
+	Basic controller(without populating any model data):
+	@Controller: an annotation primarily used to identify this class as a component for component scanning. Allow autoconfiguration creates an instance of the clas as a bean in the Spring application context. 
+	@GetMapping("/"): indicates that if an HTTP GET request is received for the root path, then this method should handle that request. It does so by returning a String value of home.
+	This String value is interpreted as the logical name of a view. The template name is derived from the logical view name by prefixing it with /templates/ and postfixing it with .html
+	In this example here, we return home as the logical name of this view, therefore the path is /src/main/resources/templates/home.html.
+	The chosen template engine is Thymeleaf. 
+	
+	The core Spring Framework: provides the core container and dependency injection framework, Spring MVC which can be used for REST API and HTML output, template based JDBC support, reactive-style programming. 
+	
+	Spring Boot: starter dependencies, autoconfiguration, the actuator which provides runtime insight into the inner workings of an application, flexible specification of environment properties, additional testing support. 
+	
+	Spring Data: provides the ability to define application's data repositories as simple java interface and capable of working with different kind of DBs. 
+	
+	Spring Security: authentication, authorization, and API secuirty. 
+	
+	Spring Integration and Spring Batch: help with the process of integrate with other application.
+	
+	Spring Cloud: cloud support.

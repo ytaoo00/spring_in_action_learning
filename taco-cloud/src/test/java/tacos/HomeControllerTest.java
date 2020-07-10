@@ -17,19 +17,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
+//@WebMvcTest arranges for the test to run in the context of a Spring MVC application
+//or it allows HomeController to be registered in Spring MVC so one can throw requests against it.
+
+//@WebMvcTest(HomeController.class)
 public class HomeControllerTest{
 	
 	@Autowired
-	private MockMvc mockMvc;
+	private MockMvc mockMvc; // injects MockMvc
 	
 	@Test
 	public void testHomePage() throws Exception{
-		mockMvc.perform(get("/"))
+		mockMvc.perform(get("/")) //Performs GEt
 		
-			.andExpect(status().isOk())
+			.andExpect(status().isOk()) // Expects HTTP 200
 			
-			.andExpect(view().name("home"))
+			.andExpect(view().name("home")) // Expects home view
 			
-			.andExpect(content().string(containsString("Welcome to...")));
+			.andExpect(content().string(containsString("Welcome to..."))); // Expects the content
 	}
 }
