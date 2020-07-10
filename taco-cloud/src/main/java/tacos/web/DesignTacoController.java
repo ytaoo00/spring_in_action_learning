@@ -68,20 +68,27 @@ public class DesignTacoController {
 	}
 	
 	@PostMapping
-	public String processDesign(@Valid Taco design, Errors errors, @ModelAttribute Order order) {
+	public String processDesign(@Valid Taco design, Errors errors, 
+			@ModelAttribute Order order) {
+		
 		if(errors.hasErrors()) {
 			return "design";
 		}
-		//Save the taco design
+		
 		log.info("processing design: " + design);
+		
 		Taco saved = designRepo.save(design);
 		order.addDesign(saved);
+		
 		return "redirect:/orders/current";
+		//Save the taco design
+		
 	}
 	
 	private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
 
-	    return ingredients.stream()
+	    return ingredients
+	    		.stream()
 	            .filter(x -> x.getType().equals(type))
 	            .collect(Collectors.toList());
 

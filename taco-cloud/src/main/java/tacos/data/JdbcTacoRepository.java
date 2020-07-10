@@ -15,9 +15,10 @@ import org.springframework.stereotype.Repository;
 import tacos.Ingredient;
 import tacos.Taco;
 
+@Repository
 public class JdbcTacoRepository implements TacoRepository{
 	
-private JdbcTemplate jdbc;
+	private JdbcTemplate jdbc;
 	
 	public JdbcTacoRepository(JdbcTemplate jdbc) {
 		this.jdbc = jdbc;
@@ -35,15 +36,11 @@ private JdbcTemplate jdbc;
 	
 	private long saveTacoInfo(Taco taco) {
 		taco.setCreatedAt(new Date());
-		PreparedStatementCreator psc =
-				new PreparedStatementCreatorFactory(
-						"insert into Taco (name, createdAt) values (?, ?)",
-						Types.VARCHAR, Types.TIMESTAMP
-				).newPreparedStatementCreator(
-						Arrays.asList(
-								taco.getName(),
-								new Timestamp(taco.getCreatedAt().getTime())));
-		
+		PreparedStatementCreatorFactory pscf = new PreparedStatementCreatorFactory(
+				"Insert into Taco(name, createdAt) values(?,?)", Types.VARCHAR, Types.TIMESTAMP);
+		pscf.setReturnGeneratedKeys(Boolean.TRUE);
+		PreparedStatementCreator psc = pscf.newPreparedStatementCreator(
+				Arrays.asList(taco.getName(), new Timestamp(taco.getCreatedAt().getTime())));
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbc.update(psc, keyHolder);
 		return keyHolder.getKey().longValue();
