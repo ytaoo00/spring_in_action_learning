@@ -28,3 +28,27 @@ Chapter 1:
 	Spring Integration and Spring Batch: help with the process of integrate with other application.
 	
 	Spring Cloud: cloud support.
+	
+	
+Chapter 2:
+	MVC: model view controller;
+	Controller: fetch and process data.
+	View: render that data into HTML that will be displayed in the broser.
+	Model: similar to database. Model is an object that ferries data between a controller and whatever view is charged with rendering that data.
+	data that’s placed in Model attributes is copied into the servlet response attributes, where the view can find them
+	View libraries such as Thymeleaf are designed to be decoupled from any particular web framework. As such, they’re unaware of Spring’s model abstraction and are unable to work with the data that the controller places in Model . But they can work with servlet request attributes. Therefore, before Spring hands the request over to a view, it copies the model data into request attributes that Thymeleaf and other view-templating options have ready access to.
+	//Thymeleaf basic: 
+	//<p th:text="${message}">placeholder message</p> which will render the servlet request attribute whose key is message into HTML.
+	//th:each iterates over a collection of elements, rendering the HTML once for each item in the collection
+	//The <form> doesn’t declare an action attribute. This means that when the form is submitted, the browser will gather up all the data in the form and send it to the server in an HTTP POST request to the same path for which a GET request displayed the form ----the /design path.
+	//Thymeleaf offers access to the Errors object via the fields property and with its th:errors attribute.
+	To apply validation in Spring MVC, you need to:
+		1) Declare validation rules on the class that is to be validated
+		2)Specify that validation should be performed in the controller methods that
+require validation
+		3)Modify the form views to display validation errors.
+		//handle receiving end of the POST request by the <form> 
+	The @Valid annotation tells Spring MVC to perform validation on the submitted  object after it’s bound to the submitted form data and before the processDesign() method is called.
+	If there are any validation errors, the details of those errors will be captured in an Errors object that’s passed into processDesign()
+	when a controller is simple enough that it doesn’t populate a model or process input one can define a controller that does nothing but forward the request to a view. 
+	

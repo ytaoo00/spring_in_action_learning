@@ -1,3 +1,6 @@
+// this a a controller which handles HTTP requests and either hand a request off to a view
+// to render HTML or write data directly to the body of a response(RESTFUL)
+
 package tacos.web;
 
 import java.util.ArrayList;
@@ -25,9 +28,17 @@ import tacos.Ingredient;
 import tacos.Ingredient.Type;
 import tacos.Order;
 
+//@Slf4j is a lombok-provided annotation that automatically generates
+//an SLF4J Logger in the class at runtime
 @Slf4j
+//@Controller serves to identify this class as a controller and to mark it as a candidate for
+//component scanning, so that Spring will discover it and automatically create an
+//instance of DesignTacoController as a bean in the Spring application context.
 @Controller
+//@RequestMapping speicifies the kind of requests that this controller handles.
+//in this case it sepcifies that DesignTacoController will handle requests whose path begins with /design
 @RequestMapping("/design")
+
 @SessionAttributes("order")
 public class DesignTacoController {
 	
@@ -41,6 +52,7 @@ public class DesignTacoController {
 		this.designRepo = designRepo;
 	}
 	
+	//when a get request is received for /design, show DesignForm() will be called to handle the request
 	@GetMapping
 	public String showDesigordernForm(Model model) {
 		List<Ingredient> ingredients = new ArrayList<>();
@@ -52,9 +64,13 @@ public class DesignTacoController {
 				filterByType(ingredients, type));
 		}
 		
+		//Model is an object that ferries data between a controller and whatever view is charged with rendering that data.
+		//data that’s placed in Model attributes is copied into the servlet response attributes, where the view can find them
+		
+		
 		//model.addAttribute("design", new Taco()); //add design to model
 		
-		return "design";
+		return "design"; //logical name of the view that will be used to render the model to the browser. 
 	}
 	
 	@ModelAttribute(name = "order")
@@ -67,6 +83,13 @@ public class DesignTacoController {
 		return new Taco();
 	}
 	
+	
+	//handle receiving end of the POST request by the <form> 
+	//The @Valid annotation tells Spring MVC to perform validation on the submitted 
+	//object after it’s bound to the submitted form data and before the processDesign()
+	//method is called.
+	//If there are any validation errors, the details of those errors will be
+	//captured in an Errors object that’s passed into processDesign()
 	@PostMapping
 	public String processDesign(@Valid Taco design, Errors errors, 
 			@ModelAttribute Order order) {
@@ -80,7 +103,7 @@ public class DesignTacoController {
 		Taco saved = designRepo.save(design);
 		order.addDesign(saved);
 		
-		return "redirect:/orders/current";
+		return "redirect:/orders/current"; // once the processDesign() completes, the user's browser should be redirected to the relative path /order/current
 		//Save the taco design
 		
 	}

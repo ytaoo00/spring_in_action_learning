@@ -9,6 +9,9 @@ import lombok.Data;
 
 @Data
 public class Taco {
+	
+	//we need to declare validation rules on the class that is to be validated.
+	
 	@NotNull
 	@Size(min=5, message="Name must be at least 5 characters long")
 	private String name;
