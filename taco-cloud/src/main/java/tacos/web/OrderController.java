@@ -2,6 +2,7 @@ package tacos.web;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -24,6 +25,7 @@ public class OrderController {
 	
 	private OrderRepository orderRepo;
 	
+	@Autowired
 	public OrderController(OrderRepository orderRepo) {
 		this.orderRepo = orderRepo;
 	}
@@ -40,7 +42,9 @@ public class OrderController {
 			return "orderForm";
 		}
 		log.info("order submitted: " + order);
-		sessionStatus.setComplete();
+		orderRepo.save(order); //save the order to db
+		//clean out the order obj
+		sessionStatus.setComplete(); //if you don’t clean it out, the order remains in session,
 		return "redirect:/";
 	}
 }

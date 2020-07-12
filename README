@@ -52,3 +52,43 @@ require validation
 	If there are any validation errors, the details of those errors will be captured in an Errors object that’s passed into processDesign()
 	when a controller is simple enough that it doesn’t populate a model or process input one can define a controller that does nothing but forward the request to a view. 
 	
+	Chapter 3:
+	Why use JDBC or JPA:
+	if not:
+		too much on code that creates a connection, creates a statement, and cleans up by closing the connection, statement, and result set.
+	 	any number of things could go wrong when creating the connection or the statement, or when performing the query. This requires that you catch a SQLException , which may or may not be helpful in figuring out what went wrong or how to address the problem.
+		SQLException is a checked exception, which requires handling in a catch block.But the most common problems, such as failure to create a connection to the database or a mistyped query, can’t possibly be addressed in a catch block and are likely to be rethrown for handling upstream.
+	
+	Using JDBC:
+	When persisting objects to a db, it is generally a good idea to have one field that uniquely idfentifies the object and the date and time that the object is created.
+	Defining Repositories:
+	figure out what operation does the given repository need to perform and write an interface class to address those methods. 
+	Then write and implementation of the interface that uses JdbcTemplate to query the db.
+	If there’s a file named schema.sql/data.sql in the root of the application’s classpath, then the SQL in that file will be executed against the database when the application starts. Therefore, you should place the contents of listing 3.8 in your project as a file named schema.sql in the src/main/resources folder.
+	Two ways to save data with JdbcTemplate:
+		Directly, using the update() method or
+		Using the SimpleJdbcInsert wrapper class
+	@ModelAttribute
+	you can use the @ModelAttribute annotation on a method argument to access an attribute from the model or have it be instantiated if not present. The model attribute is also overlain with values from HTTP Servlet request parameters whose names match to field names. This is referred to as data binding, and it saves you from having to deal with parsing and converting individual query parameters and form fields.
+	first usage: define objects which should be part of a Model
+			@ModelAttribute(name = "order")
+			public Order order() {
+				return new Order();
+			}
+	second usage: have Spring MVC supply the object to a Controller method
+		public String processDesign(@Valid Taco design, Errors errors, 
+			@ModelAttribute Order order) {
+		
+			...
+			Taco saved = designRepo.save(design);
+			order.addDesign(saved);
+			return "redirect:/orders/current";
+			
+			}
+	
+	You’ll recall that saving a taco involved not only saving the taco’s name and creation time to the Taco table, but also saving a reference to the ingredients associated with the taco to the Taco_Ingredients table. And you’ll also recall that this required you to know the Taco ’s ID, which you obtained using KeyHolder and PreparedStatementCreator .
+
+	An equivalent yet simpler way to do it is to use simplejdbcinsert. 
+	
+	
+	

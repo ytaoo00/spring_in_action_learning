@@ -38,7 +38,8 @@ import tacos.Order;
 //@RequestMapping speicifies the kind of requests that this controller handles.
 //in this case it sepcifies that DesignTacoController will handle requests whose path begins with /design
 @RequestMapping("/design")
-
+//The class-level @SessionAttributes annotation specifies any model object(in this case order)
+//that should be kept in session and available across multiple request.
 @SessionAttributes("order")
 public class DesignTacoController {
 	
@@ -46,6 +47,7 @@ public class DesignTacoController {
 	private final IngredientRepository ingredientRepo;
 	private TacoRepository designRepo;
 	
+	//inject the JdbcIngredientRepository and TacoRepository into DesignTacoCOntroller
 	@Autowired
 	public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository designRepo) {
 		this.ingredientRepo = ingredientRepo;
@@ -56,6 +58,8 @@ public class DesignTacoController {
 	@GetMapping
 	public String showDesigordernForm(Model model) {
 		List<Ingredient> ingredients = new ArrayList<>();
+		//makes a call to the injected IngredientRepository's findAll() mehtod.
+		//which fetches all the ingredients from the database before filtering them into distinct type in the model
 		ingredientRepo.findAll().forEach(i -> ingredients.add(i));
 		
 		Type[] types = Ingredient.Type.values();
@@ -73,6 +77,7 @@ public class DesignTacoController {
 		return "design"; //logical name of the view that will be used to render the model to the browser. 
 	}
 	
+	// the @ModelAttribute ensures that object will be created in the model
 	@ModelAttribute(name = "order")
 	public Order order() {
 		return new Order();
@@ -90,17 +95,22 @@ public class DesignTacoController {
 	//method is called.
 	//If there are any validation errors, the details of those errors will be
 	//captured in an Errors object that’s passed into processDesign()
+	//@ModelAttribute here is to indicate that its value should come from the model
+	// and that SPring MCV shouldn't attempt to bind request parameters to it. 
 	@PostMapping
 	public String processDesign(@Valid Taco design, Errors errors, 
 			@ModelAttribute Order order) {
 		
 		if(errors.hasErrors()) {
+			log.info("error: " + errors);
 			return "design";
 		}
 		
 		log.info("processing design: " + design);
 		
+		//uses the injected TacoRepository to save the taco
 		Taco saved = designRepo.save(design);
+		//adds the Taco object to the order that's kept in the session
 		order.addDesign(saved);
 		
 		return "redirect:/orders/current"; // once the processDesign() completes, the user's browser should be redirected to the relative path /order/current
