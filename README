@@ -90,5 +90,8 @@ require validation
 
 	An equivalent yet simpler way to do it is to use simplejdbcinsert. 
 	
-	
-	
+	3.2 Spring Data JPA—JPA persistence against a relational database
+	For Spring Data JPA—there’s no need to write an implementation! When the application starts, Spring Data JPA automatically generates an implementation on the fly. This means the repositories are ready to use from the get-go. Just inject them into the controllers like you did for the JDBC-based implementations, and you’re done.
+	One can also coustomizing JPA repositories that meet requirement beyond persistence.
+	To do so, when need to add a method declaration in the Repository interface
+	When generating the repository implementation, Spring Data examines any methods in the repository interface, parses the method name, and attempts to understand the method’s purpose in the context of the persisted object read chapter 3.2.4 for more info. 
