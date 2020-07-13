@@ -1,11 +1,11 @@
 package tacos.data;
 
+import org.springframework.data.repository.CrudRepository;
+
 import tacos.Order;
 
-public interface OrderRepository {
+public interface OrderRepository 
+			extends CrudRepository<Order, Long>{
 	
-	//saving an order requires that you also 
-	//save the tacos associated with the order to the Taco_Order_Tacos table
-	Order save(Order order);
 	
 }

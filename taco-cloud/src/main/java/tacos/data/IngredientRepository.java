@@ -1,17 +1,15 @@
 //interface that captures the essence of what you need the repository to do
 package tacos.data;
 
+import org.springframework.data.repository.CrudRepository;
+
 import tacos.Ingredient;
 
-public interface IngredientRepository {
+//CrudRepository declares about a dozen methods for CRUD (create, read, update, delete) operations.
+//Notice that it’s parameterized, with the first parameter being the entity type the repository is to persist, 
+//and the second parameter being the type of the entity ID property
+public interface IngredientRepository
+			extends CrudRepository<Ingredient,String>{
 	
-	//Query for all ingredients into a collection of Ingredient objects
-	Iterable<Ingredient> findAll();
-	
-	//Query for a single Ingredient by id
-	Ingredient findOne(String id);
-	
-	//Save an Ingredient object.
-	Ingredient save(Ingredient ingredient);
 	
 }

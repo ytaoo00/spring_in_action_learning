@@ -95,3 +95,42 @@ require validation
 	One can also coustomizing JPA repositories that meet requirement beyond persistence.
 	To do so, when need to add a method declaration in the Repository interface
 	When generating the repository implementation, Spring Data examines any methods in the repository interface, parses the method name, and attempts to understand the method’s purpose in the context of the persisted object read chapter 3.2.4 for more info. 
+	!!!!!!!!!!!this is magic ..... attempt to look into the JPA later!!!!!!!!!!!!!!!!!
+	
+	Chapter 4 Spring Security
+	when the application starts, autoconfiguration will detect that Spring Security
+is in the classpath and will set up some basic security configuration once your add the Spring Boot Security starter dependency.
+	by doing so, one can get:
+		1) All HTTP request paths require authentication
+		2) No specific roles or authorities are required
+		3) There is no login page
+		4) Authentication is prompted with HTTP basic authentication
+		5) There is only one user, the username is user
+	to do more, you will need to write some explicit configuration, overriding what autoconfiuration has given you.
+	Adding user store:
+		the Spring Security offers several options for configuring a user store, including:
+		An in-memory user store
+		A JDBC-based user store
+		An LDAP-baced user store
+		A custom user details service
+	and one can configure it by overriding a configure() mehtod defined in the WebSecurityConfigurerAdapter. 
+	In-memory User Store: 
+		only have a handful of users, none of which are likely to change. so maybe enough to fedine those users as part of the security configuration. 
+		convenient for testing purposes or for very simple applications. hard to edit user.
+	JDBC-based user store: 
+		without build a customized user detail queries, Spring expects that certain tables exist wher the user data will be kept. and pre-define a set of queries for authentication process. To use it, you need to define and populating the tables in your database accordingly. The query provided include authentication, basic authorization and group authorities query. 
+		If your schema doesn't match, you can define customized user detail queries. 
+		The authentication query selects the username, password, and enabled status. The authorities query selects zero or more rows containing the username and a granted authority. The group authorities query selects zero or more rows, each with a group ID, a group name, and an authority.
+		To make the application even more security -> encode the password.
+		it is important to remember that password in the database is never decoded.
+		the password users enter at login is encoded using the same algorithms and then compared with the ecoded password in the db. where PasswordEncoder offers two methods: encode(CharSequence rawPassword) and matches(CharSequence rawPassword, String encodedPassword)
+	LDAP based user store:
+		LDAP stands for Lightweight Directory Access Protocol, which is a directory service protocol that runs on a layer above TCP/IP stack. It provides a mechanism used to connect to, search and modify internet directories.
+		The default strategy for authenticating against LDAP is to perform a bind operation, authenticating the user directly to the LDAP server. Another option is to perform a
+comparison operation. This involves sending the entered password to the LDAP directory and asking the server to compare the password against a user’s password attribute. Because the comparison is done within the LDAP server, the actual password remains secret.
+		another good practice is to use the passwordEncoder so we ensure the attempted password(aka the password sent to server) is also encrptyed. 
+		By default, Spring Security’s LDAP authentication assumes that the LDAP server is listening on port 33389 on localhost. But if your LDAP server is on another machine,
+you can use the contextSource() method to configure the location.
+		Spring Security can provide an embedded LDAP server. Instead of setting the URL to a remote LDAP server, you can specify the root suffix for the embedded server via the root() method:for example .root("dc=tacocould, dc=com")
+		When the LDAP server starts, it will attempt to load data from any LDIF files that it can find in the classpath. LDIF (LDAP Data Interchange Format) is a standard way of representing LDAP data in a plain text file. Each record is composed of one or more lines, each containing a name:value pair. Records are separated from each other by blank lines.
+		Or, one can explicitly tell Spring which LDIF file get loaded by calling the ldif() method. 
