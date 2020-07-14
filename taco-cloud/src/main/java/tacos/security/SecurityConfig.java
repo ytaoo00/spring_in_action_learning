@@ -6,9 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 
 
@@ -16,13 +21,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
+//	@Autowired
+//	DataSource dataSource;
+
 	@Autowired
-	DataSource dataSource;
+	private UserDetailsService userDetailsService;
 	
 	// first we need to configuring a user store
 	// by overriding a configure() mehtod defined in the WebSecurityConfigurerAdapter. 
 	
+	@Bean
+	public PasswordEncoder encoder() {
+		return new BCryptPasswordEncoder();
+	}
+	
+	
 	//to get started
+	//this configure method is used for authentication process.
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{
 		// code that uses the given AuthenticationManagerBuilder to specify how users will be looked up during authentication
@@ -63,6 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		
 		//third example LDAP-based authentication
 		
+		/*
 		auth
 			.ldapAuthentication()
 				//.userSearchFilter("(uid= {0})")
@@ -79,7 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.userSearchFilter("(uid= {0})")
 				.groupSearchBase("ou=groups") //specifies the base query for finding groups
 				.groupSearchFilter("member={0}");
-				//.contextSource() cannot get the .context right forget about it for now.
+				//.contextSource() //cannot get the .context right forget about it for now.
 					//.root("dc=tacocloud,dc=com"); //if not
 //					.ldif("classpath:users.ldif");
 //				//.url("ldap://tacocloud.com:389/dc=tacocloud,dc=com");				//if remote server
@@ -93,5 +109,63 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 												//the value of the userPassword attribute in user's LDAP entry
 												//if the password is kept in a different attribute, use .passwordAttribute() to specify the password attribute's name
 
+		*/
+		
+		//fourth example : customize authentication
+			//here we configure the custom user detail service with Spring security
+		
+		auth
+			.userDetailsService(userDetailsService)
+			//It would appear that you call the encoder() method and pass its return value to passwordEncoder() .
+			//In reality, however, because the encoder() method is annotated with @Bean , it will
+			//be used to declare a PasswordEncoder bean in the Spring application context. Any
+			//calls to encoder() will then be intercepted to return the bean instance from the
+			//application context.
+			.passwordEncoder(encoder());		
+	}
+	
+	//this is another configure() method that offered by WebSecurityConfigurerAdapter
+	//this method accepts an HttpSecurity obj, which can be used to configure
+	//how security is handled at the web level. 
+	@Override
+	protected void configure(HttpSecurity http) throws Exception{
+		http
+			.authorizeRequests()
+				.antMatchers("/design", "/order") //requests for /design and /orders are only available to authenticated users
+				.access("hasRole('ROLE_USER')") // here the access() method provides a SpEL expression to declare richer security rules 
+				.antMatchers("/", "/**").access("permitAll")//all other requests should be permitted for all users
+			
+			.and() //signifies that you’re finished with the authorization configuration 
+			//and are ready to apply some additional HTTP configuration
+				.formLogin() // configure the custom login form
+				.loginPage("/login") //When Spring Security determines that the user is unauthenticated 
+				//and needs to log in, it will redirect them to this path.
+				.loginProcessingUrl("/authenticate") ///authenticate POST - process the credentials and if valid authenticate the user
+				//ok so this is another magic that spring does.
+				//you can also specify this url to anything and specify the form action in view to this address.
+				.usernameParameter("user")
+				.passwordParameter("pwd")
+			
+			.and()
+				.logout()
+					.logoutSuccessUrl("/")
+					
+			//Make H2-Console non-secured; for debug purposes		
+			.and()
+				.csrf()
+					.ignoringAntMatchers("/h2-console/**")
+					
+			//allow pages to be loaded in frames from the same origin; needed for H2-Console
+			.and()
+				.headers()
+					.frameOptions()
+						.sameOrigin()
+			; 
+			//very important!!!!!
+			//the order of the above rule matters
+			//Security rules declared first take precedence over those declared lower down.
+		//If you were to swap the order of those two security rules, all requests would have permitAll() applied to them; 
+		//the rule for /design and /orders requests would have no effect.
+	
 	}
 }

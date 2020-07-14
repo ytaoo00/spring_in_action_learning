@@ -1,5 +1,16 @@
 This is a git repo used to document the learning process for Spring in action.
 
+Chapter 0:
+	IoC: The container will create the objects, wire them together, configure them, and manage their complete life cycle from creation till destruction. The Spring container uses DI to manage the components that make up an application. These objects are called Spring Beans, which we will discuss in the next chapter.
+		for high level interpertation this container manage "a bag of objects"
+	beans: an object that is instantiated, assembled, and otherwise managed by a Spring IoC container
+	
+	@Autowired vs @Bean high level
+	    @Bean tells Spring 'here is an instance of this class, please keep hold of it and give it back to me when I ask'.
+	    @Autowired says 'please give me an instance of this class, for example, one that I created with an @Bean annotation earlier'.
+
+
+
 Chapter 1:
 	Spring project structure is similiar to a typical Maven or Gradle project structure, where application source code is placed under src/main/java, test code is placed under src/test/java, and non-Java resources are placed under src/main/resources.
 	mvnw and mvnw.cmd: maven wrapper scripts
@@ -134,3 +145,33 @@ you can use the contextSource() method to configure the location.
 		Spring Security can provide an embedded LDAP server. Instead of setting the URL to a remote LDAP server, you can specify the root suffix for the embedded server via the root() method:for example .root("dc=tacocould, dc=com")
 		When the LDAP server starts, it will attempt to load data from any LDIF files that it can find in the classpath. LDIF (LDAP Data Interchange Format) is a standard way of representing LDAP data in a plain text file. Each record is composed of one or more lines, each containing a name:value pair. Records are separated from each other by blank lines.
 		Or, one can explicitly tell Spring which LDIF file get loaded by calling the ldif() method. 
+		
+		Notice that at this point the application will still require login to all pages. But it does not make sense to ask the user to login before he register. 
+		TO solve this, there is another configure() method in WebSecurityConfigurerAdapter which accpetes HttpSecurity object, which can be used to configure how security is handled at web level
+		One can configure HttpSecurity to do following:
+			1) Requring that certain security conditions be met before allowing a request to be served.
+			2) Configuring a custom login page
+			3) Enabling users to log out of the application
+			4) Configuring cross-sit request forgery protection.
+		!!The order of these rules is important. Security rules declared first take precedence over those declared lower down.
+		
+		**loginProcessingUrl("url")
+		if no url offered, by default it is /login
+		if /authenticate offered:
+			/authenticate GET - the login form
+    			/authenticate POST - process the credentials and if valid authenticate the user
+    			/authenticate?error GET - redirect here for failed authentication attempts
+    			/authenticate?logout GET - redirect here after successfully logging out
+		one can also specify this url to anything ${url}
+		just make sure the form action send the data to the same url.
+	CSRF: Cross-site request forgery
+		this is a security attack which involves subjecting a user to code on a maliciously designed web page that automatically submits a form to another application on behalf of a user. 
+		for example, a user may be presented with a form on an attacker’s website that automatically posts to a URL on the user’s banking website.
+		to prevent this, applications can generate a CSRF token upon displaying a form, place that token in a hidden field, and then stow it for later use on the server. 
+		when the form is submitted, the token is sent back to the server along with the rest of the form data.
+		the request is then intercepted by the server and compared with the token that was orignally generated. Only if the token matches then the server will process the request. 
+	To determine who the current user is in the application:
+		1) inject a principal object into the controller method.
+		2) inject an authentication object into the controller method
+		3) use securityContextHolder to get at the security context
+		4) Use an @AuthenticationPrincipal annotated method. 

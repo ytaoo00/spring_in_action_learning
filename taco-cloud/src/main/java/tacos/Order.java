@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -31,25 +32,24 @@ public class Order implements Serializable{
 	
 	  private static final long serialVersionUID = 1L;
 	
-	  @NotBlank(message="Name is required")
-	  private String name;
-
+	  @NotBlank(message="Delivery name is required")
+	  private String deliveryName;
+	  
 	  @NotBlank(message="Street is required")
-	  private String street;
-
-
+	  private String deliveryStreet;
+	  
 	  @NotBlank(message="City is required")
-	  private String city;
-
+	  private String deliveryCity;
+	  
 	  @NotBlank(message="State is required")
-	  private String state;
-
+	  private String deliveryState;
+	  
 	  @NotBlank(message="Zip code is required")
-	  private String zip;
+	  private String deliveryZip;
 
 	  @CreditCardNumber(message="Not a valid credit card number")
 	  private String ccNumber;
-
+	  
 	  @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([1-9][0-9])$",
 	           message="Must be formatted MM/YY")
 	  private String ccExpiration;
@@ -65,6 +65,9 @@ public class Order implements Serializable{
 
 	  @ManyToMany(targetEntity=Taco.class)
 	  private List<Taco> tacos = new ArrayList<>();
+	  
+	  @ManyToOne //an order belongs to a single user, and, conversely, that a user may have many orders
+	  private User user;
 	  
 	  public void addDesign(Taco design) {
 		this.tacos.add(design);	

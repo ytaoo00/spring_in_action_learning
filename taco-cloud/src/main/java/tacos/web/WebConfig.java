@@ -20,5 +20,6 @@ public class WebConfig implements WebMvcConfigurer{
 		//passing in "/", which is the path for which your view controller will handle GET requests
 		//this method returns a ViewControllerREgistration object, on which you immediately call setViewName()
 		//to specify home as the view that a request for “/” should be forawrd to. 
+		registry.addViewController("/login");
 	}
 }
