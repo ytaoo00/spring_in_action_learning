@@ -107,6 +107,8 @@ require validation
 	To do so, when need to add a method declaration in the Repository interface
 	When generating the repository implementation, Spring Data examines any methods in the repository interface, parses the method name, and attempts to understand the method’s purpose in the context of the persisted object read chapter 3.2.4 for more info. 
 	!!!!!!!!!!!this is magic ..... attempt to look into the JPA later!!!!!!!!!!!!!!!!!
+	also the trick to add data.sql and schema.sql into classpath to have the application to preload it doesn't work for JPA. The book solve it by add a CommandLineRunner dataLoader in the Application.java.
+	
 	
 	Chapter 4 Spring Security
 	when the application starts, autoconfiguration will detect that Spring Security

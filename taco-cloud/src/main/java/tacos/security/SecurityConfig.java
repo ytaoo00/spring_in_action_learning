@@ -140,11 +140,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.formLogin() // configure the custom login form
 				.loginPage("/login") //When Spring Security determines that the user is unauthenticated 
 				//and needs to log in, it will redirect them to this path.
-				.loginProcessingUrl("/authenticate") ///authenticate POST - process the credentials and if valid authenticate the user
-				//ok so this is another magic that spring does.
-				//you can also specify this url to anything and specify the form action in view to this address.
-				.usernameParameter("user")
-				.passwordParameter("pwd")
+//				.loginProcessingUrl("/authenticate") ///authenticate POST - process the credentials and if valid authenticate the user， remember to specify the form action to this url.
+//				//ok so this is another magic that spring does.
+//				//you can also specify this url to anything and specify the form action in view to this address.
+//				.usernameParameter("user") //here you need to set up the form input name
+//				.passwordParameter("pwd") //those code are for additional layer of security 
+//				.defaultSuccessUrl("/design", true) //here the second parameter is to foce the user to the desinated page after login, even if they were navigating elsewhere prior to logging in 
 			
 			.and()
 				.logout()
