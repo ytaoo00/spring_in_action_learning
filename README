@@ -177,3 +177,7 @@ you can use the contextSource() method to configure the location.
 		2) inject an authentication object into the controller method
 		3) use securityContextHolder to get at the security context
 		4) Use an @AuthenticationPrincipal annotated method. 
+		
+		
+	Chapter 6:
+		
