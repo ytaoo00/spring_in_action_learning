@@ -178,6 +178,33 @@ you can use the contextSource() method to configure the location.
 		3) use securityContextHolder to get at the security context
 		4) Use an @AuthenticationPrincipal annotated method. 
 		
-		
+	Chapter 5: Configuration
+		Configuration properties are nothing more than properties on beans in the Spring application context that can be set from one of several property sources, including JVM system properties, command-line arguments, and environment variables.
+		Two different kinds of configuration in Spring:
+			1) Bean wiring: Configuration that declares application components to be created as beans in the Spring application context and how they should be inject into each other.
+			2) Property inject: Configurationthat sets values on beans in the Spring application context. 
+		Those two types of configurations are often declared explicitly in the same place. For example, @Bean annotated method is likely to both instantiate a bean and then set values to its properties. 
+		@ConfigurationProperties are in fact often placed on beans whose sole purpose in the application is to be holders of configuration data. This keeps configuration-specific details out of the controllers and other application classes.
+		It is also a good practice to create metadata concerning the configuration property
+	
 	Chapter 6:
+		@RestController tells Spring that all handler methods in the controller should have their return value written directly to the body of the response, rather than being carried in the model to a view for rendering.
+		the Angular portion of the application will be running on a separate host and/or port from the API (at least for now), the web browser will prevent your Angular client from consuming the API. This restriction can be overcome by including CORS (Cross-Origin Resource Sharing) headers in the server responses. Spring makes it easy to apply CORS with the @CrossOrigin annotation. As applied here, @CrossOrigin allows clients from any domain toconsume the API.
+		In the case of a POST request, an HTTP status of 201 (CREATED) is more descriptive. It tells the client that not only was the request successful, but a resource was created as a result. It’s always a good idea to use @ResponseStatus where appropriate to communicate the most descriptive and accurate HTTP status code to the client.
 		
+    POST to a URL creates a child resource at a server defined URL.
+    PUT to a URL creates/replaces the resource in its entirety at the client defined URL.
+    PATCH to a URL updates part of the resource at that client defined URL.
+
+	Although it’s true that PUT is often used to update resource data, it’s actually the semantic opposite of GET . Whereas GET requests are for transferring data from the server to the client, PUT requests are for sending data from the client to the server.
+	In that sense, PUT is really intended to perform a wholesale replacement operation rather than an update operation. In contrast, the purpose of HTTP PATCH is to perform a patch or partial update of resource data.
+	PUT does a wholesale replacement of the resource data, HTTP PATCH requests and
+Spring’s @PatchMapping are good for partial update.
+	
+		Hypermedia as the Engine of Application State, or HATEOAS, is a means of creating self-describing APIs wherein resources returned from an API contain links to related resources. This enables clients to navigate an API with minimal understanding of the API’s URLs. Instead, it understands relationships between the resources served by the API and uses its understanding of those relationships to discover the API’s URLs as it traverses those relationships.
+		This particular flavor of HATEOAS is known as HAL (Hypertext Application Language; http://stateless.co/hal_specification.html), a simple and commonly used format for embedding hyperlinks in JSON responses.
+		Basically each element would have self links to reference the resources. Should a client application need to perform an HTTP request, it deoesn;t need to be developed with any knowledge of what the resource's URL would look like. Instead it knows to ask for the self link. 
+		Spring HATEOAS provides two primary types that represent hyperlinked resources: Resource and Resources . The Resource type represents a single resource, whereas Resources is a collection of resources. Both types are capable of carrying links to other resources. When returned from a Spring MVC REST controller method, the links they carry will be included in the JSON (or XML) received by the client.
+	Spring Data REST is another member of the Spring Data family that automatically creates REST APIs for repositories created by Spring Data. By doing little more than adding Spring Data REST to your build, you get an API with operations for each repository interface you’ve defined.
+	
+	
